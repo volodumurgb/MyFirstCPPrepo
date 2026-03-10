@@ -5,11 +5,9 @@
 struct Price
 {
     int grn;
-    int cop;
+    short int cop;
 };
 void FinalDiva(FILE *f);
-void readPrice(Price &A, FILE *f);
-void normalizePrice(Price &A);
 void sumPrice(Price &A, Price &B);
 void priceCount(Price &A, int count);
 void printPrice(Price &A);

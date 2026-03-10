@@ -22,6 +22,10 @@ void printPrice(Price &A) {
     std::cout << "Price" << std::endl;
     std::cout << A.grn << " grn " << A.cop << " cop" << std::endl;
     finalizePrice(A);
+    if (A.cop >= 100) {
+        A.grn += A.cop / 100;
+        A.cop %= 100;
+    }
     std::cout << "Price with rounding" << std::endl;
     std::cout << A.grn << " grn " << A.cop << " cop" << std::endl;
 }   
@@ -37,10 +41,9 @@ while (fscanf_s(f, "%s %d %s %hi %s %d %s", name, _countof(name), &g, str, _coun
     priceCount(price, n);
     sumPrice(totalSum, price);
 }
-    priceCount(price, n);
-    if (price.cop >= 100) {
-        price.grn += price.cop / 100;
-        price.cop %= 100;
+    if (totalSum.cop >= 100) {
+        totalSum.grn += totalSum.cop / 100;
+        totalSum.cop %= 100;
     }
     printPrice(totalSum);
 }

@@ -8,13 +8,14 @@ struct Triangle{
     Point A, B, C;
 };
 double distance(Point &A, Point &B);
-bool trule(Point &A, Point &B, Point &C); //is there exiting triangle
-bool trule_2(Point &A, Point &B, Point &C); //is triangle VRODZHENIY or not
-double Ploshca(Point &A, Point &B, Point &C);
-bool TochkaInPloshca(Point &A, Point &B, Point &C, Point &D);
-void TochkaVerrification(Point &A, Point &B, Point &C, Point &D);
+bool trule(Triangle &ABC); //is there exiting triangle
+bool trule_2(Triangle &ABC); //is triangle VRODZHENIY or not
+double Ploshca(Triangle &ABC);
+double Ploshca(Point A, Point B, Point C);
+bool TochkaInPloshca(Triangle &ABC, Point &D);
+void TochkaVerrification(Triangle &ABC, Point &D);
 void TochkaOnSegment(Point &A, Point &B, Point &D);
-int TochkaInPoint(Point &A, Point &B, Point &C, Point &D);
+int TochkaInPoint(Triangle &ABC, Point &D);
 void furry();
 
 #endif

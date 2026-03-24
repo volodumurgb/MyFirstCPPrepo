@@ -9,41 +9,41 @@ double distance(Point &A, Point &B) {
     return sqrt(X*X + Y*Y);
 };
 
-double Ploshca(Point &A, Point &B, Point &C) {
-    double p = (distance(A, B)+distance(B, C)+distance(C, A))/2;
-    return sqrt(p*(p-distance(A, B))*(p-distance(B, C))*(p-distance(C, A)));
+double Ploshca(Triangle &ABC) {
+    double p = (distance(ABC.A, ABC.B)+distance(ABC.B, ABC.C)+distance(ABC.C, ABC.A))/2;
+    return sqrt(p*(p-distance(ABC.A, ABC.B))*(p-distance(ABC.B, ABC.C))*(p-distance(ABC.C, ABC.A)));
 };
 
-bool trule(Point &A, Point &B, Point &C) { //is there exiting triangle
-    if (distance(A, B)+distance(B, C) <= distance(C, A)
-     || distance(A, C)+distance(B, C) <= distance(B, A)
-     || distance(A, B)+distance(A, C) <= distance(C, B))
+bool trule(Triangle &ABC) { //is there exiting triangle
+    if (distance(ABC.A, ABC.B)+distance(ABC.B, ABC.C) <= distance(ABC.C, ABC.A)
+     || distance(ABC.A, ABC.C)+distance(ABC.B, ABC.C) <= distance(ABC.B, ABC.A)
+     || distance(ABC.A, ABC.B)+distance(ABC.A, ABC.C) <= distance(ABC.C, ABC.B))
         return 0;
     else return 1;
 };
-bool trule_2(Point &A, Point &B, Point &C) { //is triangle VRODZHENIY or not
+bool trule_2(Triangle &ABC) { //is triangle VRODZHENIY or not
     double eps = 1e-9;
-    if (fabs(distance(A, B)+distance(B, C) - distance(C, A)) < eps
-     || fabs(distance(A, C)+distance(B, C) - distance(B, A)) < eps
-     || fabs(distance(A, B)+distance(A, C) - distance(C, B)) < eps)
+    if (fabs(distance(ABC.A, ABC.B)+distance(ABC.B, ABC.C) - distance(ABC.C, ABC.A)) < eps
+     || fabs(distance(ABC.A, ABC.C)+distance(ABC.B, ABC.C) - distance(ABC.B, ABC.A)) < eps
+     || fabs(distance(ABC.A, ABC.B)+distance(ABC.A, ABC.C) - distance(ABC.C, ABC.B)) < eps)
         return 1;
     else return 0;
 };
 
-bool TochkaInPloshca(Point &A, Point &B, Point &C, Point &D) {
-    if (Ploshca(A, B, C) == Ploshca(A, B, D)+Ploshca(B, C, D)+Ploshca(C, A, D))
+bool TochkaInPloshca(Triangle ABC, Point &D) {
+    if (Ploshca(ABC) == Ploshca(ABC.A, ABC.B, D)+Ploshca(ABC.B, ABC.C, D)+Ploshca(ABC.C, ABC.A, D))
         return 1;
     else return 0;
 };
 
-int TochkaInPoint(Point &A, Point &B, Point &C, Point &D) { //is our pount equal to 
-    if (A.x == D.x && A.y == D.y) {
+int TochkaInPoint(Triangle ABC, Point &D) { //is our pount equal to vertex of triangle
+    if (ABC.A.x == D.x && ABC.A.y == D.y) {
         std::cout << "The point is \033[36mA\033[0m" << std::endl;
         return 1;
-    } else if (B.x == D.x && B.y == D.y) {
+    } else if (ABC.B.x == D.x && ABC.B.y == D.y) {
         std::cout << "The point is \033[36mB\033[0m" << std::endl;
         return 1;
-    } else if (C.x == D.x && C.y == D.y) {
+    } else if (ABC.C.x == D.x && ABC.C.y == D.y) {
         std::cout << "The point is \033[36mC\033[0m" << std::endl;
         return 1;
     } else {
@@ -60,19 +60,19 @@ void TochkaOnSegment(Point &A, Point &B, Point &D) {
     }
 };
 
-void TochkaVerrification(Point &A, Point &B, Point &C, Point &D) { //all "verification" to the point
-    if (TochkaInPoint(A, B, C, D)) {
+void TochkaVerrification(Triangle ABC, Point &D) { //all "verification" to the point
+    if (TochkaInPoint(ABC, D)) {
         return;
     } else {
-    if ( (D.x -A.x)*(B.y - A.y) - (D.y - A.y)*(B.x - A.x) == 0 ) {
+    if ( (D.x -ABC.A.x)*(ABC.B.y - ABC.A.y) - (D.y - ABC.A.y)*(ABC.B.x - ABC.A.x) == 0 ) {
             std::cout << "The point is \033[32mon the line AB\033[0m" << std::endl;
-            TochkaOnSegment(A, B, D);
-        } else if ( (D.x -B.x)*(C.y - B.y) - (D.y - B.y)*(C.x - B.x) == 0 ) {
+            TochkaOnSegment(ABC.A, ABC.B, D);
+        } else if ( (D.x -ABC.B.x)*(ABC.C.y - ABC.B.y) - (D.y - ABC.B.y)*(ABC.C.x - ABC.B.x) == 0 ) {
             std::cout << "The point is \033[32mon the line BC\033[0m" << std::endl;
-            TochkaOnSegment(B, C, D);
-        } else if ( (D.x -C.x)*(A.y - C.y) - (D.y - C.y)*(A.x - C.x) == 0 ) {
+            TochkaOnSegment(ABC.B, ABC.C, D);
+        } else if ( (D.x -ABC.C.x)*(ABC.A.y - ABC.C.y) - (D.y - ABC.C.y)*(ABC.A.x - ABC.C.x) == 0 ) {
             std::cout << "The point is \033[32mon the line CA\033[0m" << std::endl;
-            TochkaOnSegment(C, A, D);
+            TochkaOnSegment(ABC.C, ABC.A, D);
         } else {
             std::cout << "The point is \033[32mnot\033[0m on any of the lines" << std::endl;
         }
@@ -82,14 +82,15 @@ void TochkaVerrification(Point &A, Point &B, Point &C, Point &D) { //all "verifi
 void furry() { //main function
     int n;
     Point A, B, C;
+    Triangle ABC;
     bool valid_triangle = false;
     while (!valid_triangle) {  
         std::cout << "Please enter the coordinates of point \033[38;5;212mA\033[0m: " << std::endl;
-        std::cin >> A.x >> A.y;
+        std::cin >> ABC.A.x >> ABC.A.y;
         std::cout << "Please enter the coordinates of point \033[38;5;212mB\033[0m: " << std::endl;
-        std::cin >> B.x >> B.y;
+        std::cin >> ABC.B.x >> ABC.B.y;
         std::cout << "Please enter the coordinates of point \033[38;5;212mC\033[0m: " << std::endl;
-        std::cin >> C.x >> C.y;
+        std::cin >> ABC.C.x >> ABC.C.y;
         if (trule(A, B, C)) {
             if (trule_2(A, B, C)) {
                 std::cout << "The triangle is degenerate (points are collinear)" << std::endl;
@@ -109,12 +110,12 @@ void furry() { //main function
         Point D;
         std::cout << "Please enter the coordinates of point \033[38;5;212mD\033[0m: " << std::endl;
         std::cin >> D.x >> D.y;
-        if (TochkaInPloshca(A, B, C, D)) {
+        if (TochkaInPloshca(ABC, D)) {
             std::cout << "The point \e[38;5;88mis in\033[0m the area of the triangle" << std::endl;
         } else {
             std::cout << "The point \e[38;5;129mis not in\033[0m the area of the triangle" << std::endl;
         }
-        TochkaVerrification(A, B, C, D);
+        TochkaVerrification(ABC, D);
     };
     
 };

@@ -4,6 +4,9 @@
 struct Point {
     double x, y;
 };
+struct Triangle{
+    Point A, B, C;
+};
 double distance(Point &A, Point &B);
 bool trule(Point &A, Point &B, Point &C); //is there exiting triangle
 bool trule_2(Point &A, Point &B, Point &C); //is triangle VRODZHENIY or not

@@ -1,21 +1,22 @@
 #ifndef BIBLIA_H
 #define BIBLIA_H
+#include <cmath>
 
 struct Point {
     double x, y;
 };
-struct Triangle{
+struct Triangle {
     Point A, B, C;
+    double area() const;
+    bool contains(const Point &P) const;
 };
-double distance(Point &A, Point &B);
-bool trule(Triangle &ABC); //is there exiting triangle
-bool trule_2(Triangle &ABC); //is triangle VRODZHENIY or not
-double Ploshca(Triangle &ABC);
-double Ploshca(Point A, Point B, Point C);
-bool TochkaInPloshca(Triangle &ABC, Point &D);
-void TochkaVerrification(Triangle &ABC, Point &D);
-void TochkaOnSegment(Point &A, Point &B, Point &D);
-int TochkaInPoint(Triangle &ABC, Point &D);
+double Ploshca(const Triangle &ABC);
+double distance(const Point &A,const Point &B);
+bool trule(const Triangle &ABC); //is there exiting triangle
+bool trule_2(const Triangle &ABC); //is triangle VRODZHENIY or not
+void TochkaVerrification(const Triangle &ABC, const Point &D);
+void TochkaOnSegment(const Point &A, const Point &B, const Point &D);
+int TochkaInPoint(const Triangle &ABC, const Point &D);
 void furry();
 
 #endif

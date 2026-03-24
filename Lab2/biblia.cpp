@@ -36,7 +36,7 @@ bool TochkaInPloshca(Point &A, Point &B, Point &C, Point &D) {
     else return 0;
 };
 
-int TochkaInPoint(Point &A, Point &B, Point &C, Point &D) {
+int TochkaInPoint(Point &A, Point &B, Point &C, Point &D) { //is our pount equal to 
     if (A.x == D.x && A.y == D.y) {
         std::cout << "The point is \033[36mA\033[0m" << std::endl;
         return 1;
@@ -60,7 +60,7 @@ void TochkaOnSegment(Point &A, Point &B, Point &D) {
     }
 };
 
-void TochkaVerrification(Point &A, Point &B, Point &C, Point &D) {
+void TochkaVerrification(Point &A, Point &B, Point &C, Point &D) { //all "verification" to the point
     if (TochkaInPoint(A, B, C, D)) {
         return;
     } else {
@@ -79,7 +79,7 @@ void TochkaVerrification(Point &A, Point &B, Point &C, Point &D) {
     }
 };
 
-void furry() {
+void furry() { //main function
     int n;
     Point A, B, C;
     bool valid_triangle = false;

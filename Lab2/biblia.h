@@ -14,5 +14,4 @@ void TochkaOnSegment(Point &A, Point &B, Point &D);
 int TochkaInPoint(Point &A, Point &B, Point &C, Point &D);
 void furry();
 
-
 #endif

@@ -3,128 +3,81 @@
 #include <cmath>
 #include <algorithm>
 
-double distance(const Point &A, const Point &B) {
-    double X = std::fabs(A.x - B.x);
-    double Y = std::fabs(A.y - B.y);
-    return std::sqrt(X*X + Y*Y);
-};
-
-double Ploshca(const Triangle &ABC) {
-    double p = (distance(ABC.A, ABC.B)+distance(ABC.B, ABC.C)+distance(ABC.C, ABC.A))/2;
-    return sqrt(p*(p-distance(ABC.A, ABC.B))*(p-distance(ABC.B, ABC.C))*(p-distance(ABC.C, ABC.A)));
-};
+double distance(const Point &A, const Point &B) { //hypot is calculating hypotinuze: (x^2 + y^2)^0.5
+    return std::hypot(A.x - B.x, A.y - B.y);
+}
 
 double Triangle::area() const {
-    return Ploshca(*this);
-};
+    double a = distance(A, B);
+    double b = distance(B, C);
+    double c = distance(C, A);
+    double p = (a + b + c) / 2.0;
+    return std::sqrt(p * (p - a) * (p - b) * (p - c)); //if triangle have an area it`s not VRODZHENUI
+}
+
+bool Triangle::isValid() const {
+    return area() > 1e-9; 
+}
 
 bool Triangle::contains(const Point &D) const {
-    Triangle t1 = {A, B, D};
-    Triangle t2 = {A, C, D};
-    Triangle t3 = {B, C, D};
-    
     double S_main = area();
-    double S_sum = t1.area() + t2.area() + t3.area();
-    
+    double S_sum = Triangle{A, B, D}.area() + Triangle{A, C, D}.area() + Triangle{B, C, D}.area();
     return std::fabs(S_main - S_sum) < 1e-9;
-};
+}
 
-bool trule(const Triangle &ABC) { //is there exiting triangle
-    if (distance(ABC.A, ABC.B)+distance(ABC.B, ABC.C) <= distance(ABC.C, ABC.A)
-     || distance(ABC.A, ABC.C)+distance(ABC.B, ABC.C) <= distance(ABC.B, ABC.A)
-     || distance(ABC.A, ABC.B)+distance(ABC.A, ABC.C) <= distance(ABC.C, ABC.B))
-        return false;
-    else return true;
-};
-bool trule_2(const Triangle &ABC) { //is triangle VRODZHENIY or not
+void Triangle::verifyPointLocation(const Point &D) const {
     double eps = 1e-9;
-    if (fabs(distance(ABC.A, ABC.B)+distance(ABC.B, ABC.C) - distance(ABC.C, ABC.A)) < eps
-     || fabs(distance(ABC.A, ABC.C)+distance(ABC.B, ABC.C) - distance(ABC.B, ABC.A)) < eps
-     || fabs(distance(ABC.A, ABC.B)+distance(ABC.A, ABC.C) - distance(ABC.C, ABC.B)) < eps)
-        return 1;
-    else return 0;
-};
 
-int TochkaInPoint(const Triangle &ABC, const Point &D) { //is our pount equal to vertex of triangle
-    if (ABC.A.x == D.x && ABC.A.y == D.y) {
-        std::cout << "The point is \033[36mA\033[0m" << std::endl;
-        return 1;
-    } else if (ABC.B.x == D.x && ABC.B.y == D.y) {
-        std::cout << "The point is \033[36mB\033[0m" << std::endl;
-        return 1;
-    } else if (ABC.C.x == D.x && ABC.C.y == D.y) {
-        std::cout << "The point is \033[36mC\033[0m" << std::endl;
-        return 1;
-    } else {
-        std::cout << "The point \033[35mis not\033[0m any of the vertex of the triangle :(" << std::endl;
-    }
-    return 0;
+    if (distance(A, D) < eps) { std::cout << "The point is \033[36mA\033[0m\n"; return; } //guessing if the point is our vertex
+    if (distance(B, D) < eps) { std::cout << "The point is \033[36mB\033[0m\n"; return; }
+    if (distance(C, D) < eps) { std::cout << "The point is \033[36mC\033[0m\n"; return; }
 
-};
-
-void TochkaOnSegment(const Point &A, const Point &B, const Point &D) {
-    if ((std::min(A.x, B.x) <= D.x && std::max(A.x, B.x) >= D.x) 
-    && (std::min(A.y, B.y) <= D.y && std::max(A.y, B.y) >= D.y)) {
-        std::cout << "Futhermore, that point in a \033[33msegment\033[0m" << std::endl;
-    }
-};
-
-void TochkaVerrification(const Triangle &ABC, const Point &D) { //all "verification" to the point
-    if (TochkaInPoint(ABC, D)) {
-        return;
-    } else {
-    if ( std::fabs((D.x -ABC.A.x)*(ABC.B.y - ABC.A.y) - (D.y - ABC.A.y)*(ABC.B.x - ABC.A.x)) < 1e-9 ) {
-            std::cout << "The point is \033[32mon the line AB\033[0m" << std::endl;
-            TochkaOnSegment(ABC.A, ABC.B, D);
-        } else if ( std::fabs((D.x -ABC.B.x)*(ABC.C.y - ABC.B.y) - (D.y - ABC.B.y)*(ABC.C.x - ABC.B.x)) < 1e-9 ) {
-            std::cout << "The point is \033[32mon the line BC\033[0m" << std::endl;
-            TochkaOnSegment(ABC.B, ABC.C, D);
-        } else if ( std::fabs((D.x -ABC.C.x)*(ABC.A.y - ABC.C.y) - (D.y - ABC.C.y)*(ABC.A.x - ABC.C.x)) < 1e-9 ) {
-            std::cout << "The point is \033[32mon the line CA\033[0m" << std::endl;
-            TochkaOnSegment(ABC.C, ABC.A, D);
-        } else {
-            std::cout << "The point is \033[32mnot\033[0m on any of the lines" << std::endl;
-        }
-    }
-};
-
-void furry() { //main function
-    int n;
-    Point A, B, C;
-    Triangle ABC;
-    bool valid_triangle = false;
-    while (!valid_triangle) {  
-        std::cout << "Please enter the coordinates of point \033[38;5;212mA\033[0m: " << std::endl;
-        std::cin >> ABC.A.x >> ABC.A.y;
-        std::cout << "Please enter the coordinates of point \033[38;5;212mB\033[0m: " << std::endl;
-        std::cin >> ABC.B.x >> ABC.B.y;
-        std::cout << "Please enter the coordinates of point \033[38;5;212mC\033[0m: " << std::endl;
-        std::cin >> ABC.C.x >> ABC.C.y;
-        if (trule(ABC)) {
-            if (trule_2(ABC)) {
-                std::cout << "The triangle is degenerate (points are collinear)" << std::endl;
-                std::cout << "Please enter \033[31mvalid\033[0m points that form a proper triangle" << std::endl;
-            } else {
-                std::cout << "The area of the triangle is: " << ABC.area() << std::endl;
-                valid_triangle = true;
+    auto isOnSegment = [&](const Point& p1, const Point& p2, const std::string& name) { //if the point is on segment(vector *)
+        if (std::fabs((D.x - p1.x) * (p2.y - p1.y) - (D.y - p1.y) * (p2.x - p1.x)) < eps) {
+            if (D.x >= std::min(p1.x, p2.x) && D.x <= std::max(p1.x, p2.x) &&
+                D.y >= std::min(p1.y, p2.y) && D.y <= std::max(p1.y, p2.y)) {
+                std::cout << "The point is \033[32mon the segment " << name << "\033[0m\n";
+                return true;
             }
-        } else {
-            std::cout << "There is NO triangle with these points" << std::endl;
-            std::cout << "Please enter \033[31mvalid\033[0m Points" << std::endl;
         }
+        return false;
     };
-    std::cout << "Please enter the \033[35mnumber of points\033[0m, that need to be checked: " << std::endl; //try it
+    if (isOnSegment(A, B, "AB")) return;
+    if (isOnSegment(B, C, "BC")) return;
+    if (isOnSegment(C, A, "CA")) return;
+    std::cout << "The point \033[35mis not\033[0m any of the vertex or edges :(\n";
+}
+
+void furry() {
+    Triangle ABC;
+    
+    while (true) {  
+        std::cout << "Enter coordinates for \033[38;5;212mA\033[0m (x y): "; std::cin >> ABC.A.x >> ABC.A.y;
+        std::cout << "Enter coordinates for \033[38;5;212mB\033[0m (x y): "; std::cin >> ABC.B.x >> ABC.B.y;
+        std::cout << "Enter coordinates for \033[38;5;212mC\033[0m (x y): "; std::cin >> ABC.C.x >> ABC.C.y;
+        
+        if (ABC.isValid()) {
+            std::cout << "The area of the triangle is: " << ABC.area() << std::endl;
+            break; //if our triangle doesn`t exist the code will loop
+        } 
+        std::cout << "\033[31mInvalid or degenerate triangle. Please try again.\033[0m\n";
+    }
+
+    int n;
+    std::cout << "Enter the \033[35mnumber of points\033[0m to check: ";
     std::cin >> n;
+    
     for (int j = 0; j < n; j++) {
         Point D;
-        std::cout << "Please enter the coordinates of point \033[38;5;212mD\033[0m: " << std::endl;
+        std::cout << "\nEnter coordinates for point \033[38;5;212mD\033[0m: ";
         std::cin >> D.x >> D.y;
-        if (ABC.contains(D)) {
-            std::cout << "The point \033[38;5;88mis in\033[0m the area of the triangle" << std::endl;
+        
+        if (ABC.contains(D)) { //if point D is in triangle
+            std::cout << "The point \033[38;5;88mis inside\033[0m the triangle.\n";
         } else {
-            std::cout << "The point \033[38;5;129mis not in\033[0m the area of the triangle" << std::endl;
+            std::cout << "The point \033[38;5;129mis outside\033[0m the triangle.\n";
         }
-        TochkaVerrification(ABC, D);
-    };
-    
-};
+        
+        ABC.verifyPointLocation(D); //other verifications
+    }
+}   

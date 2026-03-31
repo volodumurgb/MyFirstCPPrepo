@@ -60,7 +60,13 @@ void furry() {
             std::cout << "The area of the triangle is: " << ABC.area() << std::endl;
             break; //if our triangle doesn`t exist the code will loop
         } 
-        std::cout << "\033[31mInvalid or degenerate triangle. Please try again.\033[0m\n";
+        std::cout << "\033[31mInvalid or VRODZHENIY triangle. Please try again. If you want, i don`t care [AS]\033[0m\n"; //silly continue if triangle is invalid
+        std::cout << "Continue or not?(type 1 if yes, 0 if not(program will reatart))";
+        bool k;
+        std::cin >> k;
+        if (k == 1) {
+            break;
+        };
     }
 
     int n;

@@ -10,7 +10,8 @@ struct Triangle {
    
     double area() const;                               
     bool isValid() const;                              // VRoDZHENUI
-    bool contains(const Point &D) const;               // Point in triangle
+    bool contains(const Point &D) const;       // Point in triangle(heron)
+    bool contains2(const Point &D) const;      //point in triangle(vector)
     void verifyPointLocation(const Point &D) const;    // all about the point D
 };
 

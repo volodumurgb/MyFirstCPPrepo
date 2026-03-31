@@ -19,11 +19,20 @@ bool Triangle::isValid() const {
     return area() > 1e-9; 
 }
 
-bool Triangle::contains(const Point &D) const {
+bool Triangle::contains(const Point &D) const { //Heron
     double S_main = area();
     double S_sum = Triangle{A, B, D}.area() + Triangle{A, C, D}.area() + Triangle{B, C, D}.area();
     return std::fabs(S_main - S_sum) < 1e-9;
 }
+bool Triangle::contains2(const Point &D) const { //vector dobytok
+    Point AB{B.x - A.x, B.y - A.y};
+    Point AC{C.x - A.x, C.y - A.y};
+    Point AD{D.x - A.x, D.y - A.y};
+    double cross1 = AB.x * AD.y - AB.y * AD.x;
+    double cross2 = AC.x * AD.y - AC.y * AD.x;
+    double cross3 = AB.x * AC.y - AB.y * AC.x;
+    return (cross1 >= 0 && cross2 <= 0) || (cross1 <= 0 && cross2 >= 0) || (cross1 >= 0 && cross3 >= 0) || (cross1 <= 0 && cross3 <= 0); 
+};
 
 void Triangle::verifyPointLocation(const Point &D) const {
     double eps = 1e-9;
@@ -60,7 +69,7 @@ void furry() {
             std::cout << "The area of the triangle is: " << ABC.area() << std::endl;
             break; //if our triangle doesn`t exist the code will loop
         } 
-        std::cout << "\033[31mInvalid or VRODZHENIY triangle. Please try again. If you want, i don`t care [AS]\033[0m\n"; //silly continue if triangle is invalid
+        std::cout << "\033[31mVRODZHENIY triangle. Please try again. If you want, i don`t care [AS]\033[0m\n"; //silly continue if triangle is invalid
         std::cout << "Continue or not?(type 1 if yes, 0 if not(program will reatart))";
         bool k;
         std::cin >> k;
@@ -77,13 +86,20 @@ void furry() {
         Point D;
         std::cout << "\nEnter coordinates for point \033[38;5;212mD\033[0m: ";
         std::cin >> D.x >> D.y;
-        
-        if (ABC.contains(D)) { //if point D is in triangle
-            std::cout << "The point \033[38;5;88mis inside\033[0m the triangle.\n";
+        if (!ABC.isValid()){
+            std::cout << "The TRiangle is \033[31mVrodzheniy\033[0m, Point cannot be inside triangle(Heron and Vector Method is irrational(they wont be done)";
         } else {
-            std::cout << "The point \033[38;5;129mis outside\033[0m the triangle.\n";
-        }
-        
+            if (ABC.contains(D)) { //if point D is in triangle
+                std::cout << "The point \033[38;5;88mis inside\033[0m the triangle.Heron method\n";
+            } else {
+                std::cout << "The point \033[38;5;129mis outside\033[0m the triangle. Heron Method\n";
+            }
+            if (ABC.contains2(D)){
+                std::cout << "The point \033[38;5;88mis inside\033[0m the triangle.Vector method\n";
+            } else {    
+                std::cout << "The point \033[38;5;129mis outside\033[0m the triangle.Vector Method\n";
+            };
+        };
         ABC.verifyPointLocation(D); //other verifications
     }
 }   

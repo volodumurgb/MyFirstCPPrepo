@@ -7,35 +7,42 @@ double distance(const Point &A, const Point &B) { //hypot is calculating hypotin
     return std::hypot(A.x - B.x, A.y - B.y);
 }
 
-double Triangle::area() const {
+/*double Triangle::area() const {
     double a = distance(A, B);
     double b = distance(B, C);
     double c = distance(C, A);
     double p = (a + b + c) / 2.0;
-    return std::sqrt(p * (p - a) * (p - b) * (p - c)); //if triangle have an area it`s not VRODZHENUI
+    return std::sqrt(p * (p - a) * (p - b) * (p - c));
+ } //if triangle have an area it`s not VRODZHENUI*/
+double Triangle::area() const {
+    // area by vector
+    return 0.5 * std::fabs((B.x - A.x) * (C.y - A.y) - (C.x - A.x) * (B.y - A.y));
 }
 
 bool Triangle::isValid() const {
-    return area() > 1e-9; 
+    return area() > 1e-18; 
 }
 
 bool Triangle::contains(const Point &D) const { //Heron
     double S_main = area();
     double S_sum = Triangle{A, B, D}.area() + Triangle{A, C, D}.area() + Triangle{B, C, D}.area();
-    return std::fabs(S_main - S_sum) < 1e-9;
+    return std::fabs(S_main - S_sum) < 1e-18;
 }
-bool Triangle::contains2(const Point &D) const { //vector dobytok
-    Point AB{B.x - A.x, B.y - A.y};
-    Point AC{C.x - A.x, C.y - A.y};
-    Point AD{D.x - A.x, D.y - A.y};
-    double cross1 = AB.x * AD.y - AB.y * AD.x;
-    double cross2 = AC.x * AD.y - AC.y * AD.x;
-    double cross3 = AB.x * AC.y - AB.y * AC.x;
-    return (cross1 >= 0 && cross2 <= 0) || (cross1 <= 0 && cross2 >= 0) || (cross1 >= 0 && cross3 >= 0) || (cross1 <= 0 && cross3 <= 0); 
-};
+bool Triangle::contains2(const Point &D) const {
+    auto cross_product = [](Point a, Point b, Point c) {
+        return (b.x - a.x) * (c.y - a.y) - (b.y - a.y) * (c.x - a.x);
+    };
+
+    double cp1 = cross_product(A, B, D);
+    double cp2 = cross_product(B, C, D);
+    double cp3 = cross_product(C, A, D);
+    bool has_neg = (cp1 < 0) || (cp2 < 0) || (cp3 < 0);
+    bool has_pos = (cp1 > 0) || (cp2 > 0) || (cp3 > 0);
+    return !(has_neg && has_pos);
+}
 
 void Triangle::verifyPointLocation(const Point &D) const {
-    double eps = 1e-9;
+    double eps = 1e-18;
 
     if (distance(A, D) < eps) { std::cout << "The point is \033[36mA\033[0m\n"; return; } //guessing if the point is our vertex
     if (distance(B, D) < eps) { std::cout << "The point is \033[36mB\033[0m\n"; return; }
@@ -87,19 +94,18 @@ void furry() {
         std::cout << "\nEnter coordinates for point \033[38;5;212mD\033[0m: ";
         std::cin >> D.x >> D.y;
         if (!ABC.isValid()){
-            std::cout << "The TRiangle is \033[31mVrodzheniy\033[0m, Point cannot be inside triangle(Heron and Vector Method is irrational(they wont be done)";
+            std::cout << "The TRiangle is \033[31mVrodzheniy\033[0m, Point cannot be inside triangle(Heron and Vector Method is irrational(they wont be done)\n";
+        };
+        if (ABC.contains(D)) { //if point D is in triangle
+            std::cout << "The point \033[38;5;88mis inside\033[0m the triangle.Heron method\n";
         } else {
-            if (ABC.contains(D)) { //if point D is in triangle
-                std::cout << "The point \033[38;5;88mis inside\033[0m the triangle.Heron method\n";
-            } else {
-                std::cout << "The point \033[38;5;129mis outside\033[0m the triangle. Heron Method\n";
-            }
-            if (ABC.contains2(D)){
-                std::cout << "The point \033[38;5;88mis inside\033[0m the triangle.Vector method\n";
-            } else {    
-                std::cout << "The point \033[38;5;129mis outside\033[0m the triangle.Vector Method\n";
-            };
+            std::cout << "The point \033[38;5;129mis outside\033[0m the triangle. Heron Method\n";
+        };
+        if (ABC.contains2(D)){
+            std::cout << "The point \033[38;5;88mis inside\033[0m the triangle.Vector method\n";
+        } else {    
+            std::cout << "The point \033[38;5;129mis outside\033[0m the triangle.Vector Method\n";
         };
         ABC.verifyPointLocation(D); //other verifications
     }
-}   
+};

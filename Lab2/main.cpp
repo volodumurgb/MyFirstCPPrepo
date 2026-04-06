@@ -2,5 +2,5 @@
 main(){
     furry();
     return 0;
-    
+
 }

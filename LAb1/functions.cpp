@@ -29,7 +29,12 @@ void printPrice(Price &A) {
     std::cout << "Price with rounding" << std::endl;
     std::cout << A.grn << " grn " << A.cop << " cop" << std::endl;
 }   
-void FinalDiva(FILE *f) {
+void FinalDiva() {
+FILE *f;
+int err = fopen_s(&f, "check.txt", "r");
+if (err != 0) {
+    std::cout << "Error opening file!" << std::endl; //can also be used std::cerr
+}
 char name[50];
 int g, n;
 short int c;
@@ -46,4 +51,5 @@ while (fscanf_s(f, "%s %d %s %hi %s %d %s", name, _countof(name), &g, str, _coun
         totalSum.cop %= 100;
     }
     printPrice(totalSum);
+    fclose(f);
 }

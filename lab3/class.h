@@ -11,13 +11,13 @@ class HospoduDaiSul{
         //methods
         void Dyhotomia();
         void Newton();
+        double f(double x);
+        double df(double x);
 
     private:
         double a;
         double b;
         double eps;
-        double f(double x);
-        double df(double x);
 };
 
 void Pomolumosi();

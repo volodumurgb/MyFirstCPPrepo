@@ -53,7 +53,7 @@ public:
     }
     void SaySomething() override
     {
-        std::cout << "I am a Lesbian! Scissors is the best" << std::endl;
+        std::cout << "I am a Lesbian! Scissors are the best" << std::endl;
     }
 };
 
